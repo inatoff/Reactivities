@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 namespace API
 {
@@ -28,8 +30,6 @@ namespace API
             {
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
-
-            services.AddControllers();
             services.AddSwaggerGen(setupAction =>
             {
 
@@ -52,6 +52,11 @@ namespace API
                     }
                 });
                 setupAction.CustomSchemaIds(x => x.FullName);
+            });
+
+            services.AddControllers().AddFluentValidation(cfg => 
+            {
+                cfg.RegisterValidatorsFromAssemblyContaining<Create>();
             });
             services.AddCors(opt =>
             {
